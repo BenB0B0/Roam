@@ -16,15 +16,19 @@ public class Play extends BasicGameState{
 	Image wumpusHint;
 	Image key;
 	Image keyGlow;
+	Image pit;
+	Image pitDeath;
 	//*******************
 	
 	//BOOLEANS***********
 	boolean wumpusDeathShow = false;
 	boolean market = false;
 	boolean quit = false;
-	boolean hint = true;
+	boolean hint = false;
 	boolean keyShow = false;
-	boolean keyGlowShow = true;
+	boolean keyGlowShow = false;
+	boolean pitShowHint = false;
+	boolean pitDeadShow = false;
 	//********************
 	
 	//AVATAR INFO*********
@@ -40,24 +44,11 @@ public class Play extends BasicGameState{
 	//**********************
 	
 	//Wumpus Generation*****
-	int x1 = -1034 + (int) (Math.random() * ((-74 - (-1032)) + 1));
-	int y1 = -848 + (int) (Math.random() * ((-4 - (-848)) +1));
-	int x2=0;
-	int y2=0;
-	int treeCheck=0;
-	int wumpusHintY1;
-	int wumpusHintY2;
-	int wumpusHintX1;
-	int wumpusHintX2;
+	int x1, x2, y1, y2, wumpusHintY1, wumpusHintY2, wumpusHintX1, wumpusHintX2;
 	//Key Generation*********
-	int keyx1 = -1034 + (int) (Math.random() * ((-74 - (-1032)) + 1));
-	int keyy1 = -848 + (int) (Math.random() * ((-4 - (-848)) +1));
-	int keyx2=0;
-	int keyy2=0;
-	int keyHintY1;
-	int keyHintY2;
-	int keyHintX1;
-	int keyHintX2;
+	int keyx1, keyy1, keyx2, keyy2, keyHintY1, keyHintY2, keyHintX1, keyHintX2;
+	//Pit Generation*********
+	int pitx1, pitx2, pity1, pity2, pitHintX1, pitHintX2, pitHintY1, pitHintY2;
 	//***********************
 	
 	public Play(int state){
@@ -72,6 +63,8 @@ public class Play extends BasicGameState{
 		wumpusHint = new Image("res/wumpusHint.png");
 		key = new Image("res/keyHint.png");
 		keyGlow = new Image("res/keyGlow.png");
+		pit = new Image("res/pit.png");
+		pitDeath = new Image("res/pitdeath.jpg");
 		
 		Front = new Image("res/Front.png");
 		Back = new Image("res/Back.png");
@@ -89,9 +82,29 @@ public class Play extends BasicGameState{
 		movingRight = new Animation(walkRight, duration, false);
 		guy = movingDown;
 		
-		generateWumpus();
-		treeCheck=0;
-		generateKey();
+		//OBJECT CREATIONS*******************************************************************************
+		creation wumpus[] = new creation[1];
+		creation keyObject[] = new creation[1];
+		creation pit[] = new creation[1];
+		wumpus[0] = new creation();
+		keyObject[0] = new creation();
+		pit[0] = new creation();
+		
+		wumpus[0].generateKey();
+		x1 = wumpus[0].getX1(); x2 = wumpus[0].getX2(); y1 = wumpus[0].getY1(); y2 = wumpus[0].getY2();
+		wumpusHintY1 = wumpus[0].getHintY1(); wumpusHintY2 = wumpus[0].getHintY2();
+		wumpusHintX1 = wumpus[0].getHintX1(); wumpusHintX2 = wumpus[0].getHintX2();
+		
+		keyObject[0].generateKey();
+		keyx1 = keyObject[0].getX1(); keyx2 = keyObject[0].getX2(); keyy1 = keyObject[0].getY1(); keyy2 = keyObject[0].getY2();
+		keyHintY1 = keyObject[0].getHintY1(); keyHintY2 = keyObject[0].getHintY2();
+		keyHintX1 = keyObject[0].getHintX1(); keyHintX2 = keyObject[0].getHintX2();
+		
+		pit[0].generateKey();
+		pitx1 = pit[0].getX1(); pitx2 = pit[0].getX2(); pity1 = pit[0].getY1(); pity2 = pit[0].getY2();
+		pitHintY1 = pit[0].getHintY1(); pitHintY2 = pit[0].getHintY2();
+		pitHintX1 = pit[0].getHintX1(); pitHintX2 = pit[0].getHintX2();
+		//**************************************************************************************************
 		
 		//wumpus location printed to console
 		System.out.println("Wumpus Location:");
@@ -109,11 +122,21 @@ public class Play extends BasicGameState{
 		System.out.println(keyy2);
 		System.out.println(keyx1);
 		System.out.println(keyx2);
-		System.out.println("Key Hint:");
+		System.out.println("p Hint:");
 		System.out.println(keyHintY1);
 		System.out.println(keyHintY2);
 		System.out.println(keyHintX1);
 		System.out.println(keyHintX2);
+		System.out.println("Pit Location:");
+		System.out.println(pity1);
+		System.out.println(pity2);
+		System.out.println(pitx1);
+		System.out.println(pitx2);
+		System.out.println("Pit Hint:");
+		System.out.println(pitHintY1);
+		System.out.println(pitHintY2);
+		System.out.println(pitHintX1);
+		System.out.println(pitHintX2);
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
@@ -141,6 +164,9 @@ public class Play extends BasicGameState{
 				g.clear();
 			}
 		}
+		if(pitShowHint==true){
+			pit.draw(540, 165);
+		}
 		//wumpus green hint
 		if(hint==true){
 			wumpusHint.draw(540,25);
@@ -150,14 +176,17 @@ public class Play extends BasicGameState{
 			key.draw(530,110);
 			keyGlowShow=false;
 		}
-		//end of the game death screen
-		if(wumpusDeathShow==true){
-			g.clear();
-			wumpusDeath.draw(0,0);
-		}
 		//glow for the key hint
 		if(keyGlowShow==true){
 			keyGlow.draw(495,90);
+		}
+		//end of the game death screen - pit
+		if(pitDeadShow==true){
+			pitDeath.draw(0,0);
+		}
+		//end of the game death screen - wumpus
+		if(wumpusDeathShow==true){
+			wumpusDeath.draw(0,0);
 		}
 	}
 	
@@ -224,6 +253,15 @@ public class Play extends BasicGameState{
 			}
 			else
 				keyGlowShow = false;
+			//pit
+			if((guyPositionY>pity2 && guyPositionY<pity1) && (guyPositionX>pitx2 && guyPositionX<pitx1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pitHintY2 && guyPositionY<pitHintY1) && (guyPositionX>pitHintX2 && guyPositionX<pitHintX1)){
+				pitShowHint = true;				
+			}
+			else
+				pitShowHint = false;
 		}
 		
 		//down
@@ -286,6 +324,15 @@ public class Play extends BasicGameState{
 			}
 			else
 				keyGlowShow = false;
+			//pit
+			if((guyPositionY>pity2 && guyPositionY<pity1) && (guyPositionX>pitx2 && guyPositionX<pitx1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pitHintY2 && guyPositionY<pitHintY1) && (guyPositionX>pitHintX2 && guyPositionX<pitHintX1)){
+				pitShowHint = true;				
+			}
+			else
+				pitShowHint = false;
 		}
 		
 		//left
@@ -348,6 +395,15 @@ public class Play extends BasicGameState{
 			}
 			else
 				keyGlowShow = false;
+			//pit
+			if((guyPositionY>pity2 && guyPositionY<pity1) && (guyPositionX>pitx2 && guyPositionX<pitx1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pitHintY2 && guyPositionY<pitHintY1) && (guyPositionX>pitHintX2 && guyPositionX<pitHintX1)){
+				pitShowHint = true;				
+			}
+			else
+				pitShowHint = false;
 		}
 		
 		//right
@@ -410,6 +466,15 @@ public class Play extends BasicGameState{
 			}
 			else
 				keyGlowShow = false;
+			//pit
+			if((guyPositionY>pity2 && guyPositionY<pity1) && (guyPositionX>pitx2 && guyPositionX<pitx1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pitHintY2 && guyPositionY<pitHintY1) && (guyPositionX>pitHintX2 && guyPositionX<pitHintX1)){
+				pitShowHint = true;				
+			}
+			else
+				pitShowHint = false;
 		}
 		
 		//market menu
@@ -450,162 +515,10 @@ public class Play extends BasicGameState{
 		}
 		
 		//when game is over  
-		if(wumpusDeathShow==true){
+		if(wumpusDeathShow==true || pitDeadShow==true){
 			if(input.isKeyDown(Input.KEY_Q)){
 				System.exit(0);
 			}
-		}
-	}
-	
-	public void generateWumpus(){
-		while(treeCheck==0){
-			//random placement of objects logic
-			if(x1<-1000){
-				x2 = x1+25; 
-			}
-			if(x1>=-1000){
-				x2 = x1-25;
-			}
-			if(y1<-800){
-				y2 = y1+25; 
-			}
-			if(y1>=-800){
-				y2 = y1-25;
-			}
-			treeCheck=1; //**************
-			if((y1>-467 && y1<-274) && (x1>-151 && x1<-1)){
-				treeCheck=0;
-			}
-			if((y1>-152 && y1<-9) && (x1>-341 && x1<-151)){
-				treeCheck=0;
-			}
-			if((y1>-622 && y1<-424) && (x1>-409 && x1<-212)){
-				treeCheck=0;
-			}
-			if((y1>-195 && y1<-2) && (x1>-766 && x1<-564)){
-				treeCheck=0;
-			}
-			if((y1>-120) && (x1>-1013 && x1<-828)){
-				treeCheck=0;
-			}
-			if((y1>-604 && y1<-420) && (x1>-517 && x1<-631)){
-				treeCheck=0;
-			}
-			if((y1>-413 && y1<-224) && (x1>-982 && x1<-797)){
-				treeCheck=0;
-			}
-			if((y1>-613 && y1<-422) && (x1>-819 && x1<-628)){
-				treeCheck=0;
-			}
-			if((y1>-385 && y1<-165) && (x1>-647 && x1<-363)){
-				treeCheck=0;
-			}
-			
-			if(y1<y2){
-				int temp; 
-				temp=y1;
-				y1=y2;
-				y2=temp;
-			}
-			if(x1<x2){
-				int temp; 
-				temp=x1;
-				x1=x2;
-				x2=temp;
-			}
-		}
-		
-		if (y1>y2){
-			wumpusHintY1 = y1+100;
-			wumpusHintY2 = y2-100;
-		}
-		else{
-			wumpusHintY2 = y2+100;
-			wumpusHintY1 = y1-100;
-		}
-		if (x1>x2){
-			wumpusHintX1 = x1+100;
-			wumpusHintX2 = x2-100;
-		}
-		else{
-			wumpusHintX2 = x2+100;
-			wumpusHintX1 = x1-100;
-		}
-	}
-	
-	public void generateKey(){
-		while(treeCheck==0){
-			//random placement of objects logic
-			if(keyx1<-1000){
-				keyx2 = keyx1+25; 
-			}
-			if(keyx1>=-1000){
-				keyx2 = keyx1-25;
-			}
-			if(keyy1<-800){
-				keyy2 = keyy1+25; 
-			}
-			if(keyy1>=-800){
-				keyy2 = keyy1-25;
-			}
-			treeCheck=1;
-			if((keyy1>-467 && keyy1<-274) && (keyx1>-151 && keyx1<-1)){
-				treeCheck=0;
-			}
-			if((keyy1>-152 && keyy1<-9) && (keyx1>-341 && keyx1<-151)){
-				treeCheck=0;
-			}
-			if((keyy1>-622 && keyy1<-424) && (keyx1>-409 && keyx1<-212)){
-				treeCheck=0;
-			}
-			if((keyy1>-195 && keyy1<-2) && (keyx1>-766 && keyx1<-564)){
-				treeCheck=0;
-			}
-			if((keyy1>-120) && (keyx1>-1013 && keyx1<-828)){
-				treeCheck=0;
-			}
-			if((keyy1>-604 && keyy1<-420) && (keyx1>-517 && keyx1<-631)){
-				treeCheck=0;
-			}
-			if((keyy1>-413 && keyy1<-224) && (keyx1>-982 && keyx1<-797)){
-				treeCheck=0;
-			}
-			if((keyy1>-613 && keyy1<-422) && (keyx1>-819 && keyx1<-628)){
-				treeCheck=0;
-			}
-			if((keyy1>-385 && keyy1<-165) && (keyx1>-647 && keyx1<-363)){
-				treeCheck=0;
-			}
-			
-			if(keyy1<keyy2){
-				int temp; 
-				temp=keyy1;
-				keyy1=keyy2;
-				keyy2=temp;
-			}
-			if(keyx1<keyx2){
-				int temp; 
-				temp=keyx1;
-				keyx1=keyx2;
-				keyx2=temp;
-			}
-		}
-		
-		if (keyy1>keyy2){
-			keyHintY1 = keyy1+100;
-			keyHintY2 = keyy2-100;
-		}
-		else{
-			keyHintY2 = keyy2+100;
-			keyHintY1 = keyy1-100;
-		}
-		if (keyx1>keyx2){
-			keyHintX1 = keyx1+100;
-			keyHintX2 = keyx2-100;
-		}
-		else{
-			keyHintX2 = keyx2+100;
-			keyHintX1 = keyx1-100;
 		}
 	}
 	
