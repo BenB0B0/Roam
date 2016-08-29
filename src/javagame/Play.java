@@ -13,14 +13,18 @@ public class Play extends BasicGameState{
 	Image marketBG;
 	Image monster;
 	Image wumpusDeath;
-	Image dialog;
+	Image wumpusHint;
+	Image key;
+	Image keyGlow;
 	//*******************
 	
 	//BOOLEANS***********
 	boolean wumpusDeathShow = false;
 	boolean market = false;
 	boolean quit = false;
-	boolean hint = false;
+	boolean hint = true;
+	boolean keyShow = false;
+	boolean keyGlowShow = true;
 	//********************
 	
 	//AVATAR INFO*********
@@ -45,6 +49,15 @@ public class Play extends BasicGameState{
 	int wumpusHintY2;
 	int wumpusHintX1;
 	int wumpusHintX2;
+	//Key Generation*********
+	int keyx1 = -1034 + (int) (Math.random() * ((-74 - (-1032)) + 1));
+	int keyy1 = -848 + (int) (Math.random() * ((-4 - (-848)) +1));
+	int keyx2=0;
+	int keyy2=0;
+	int keyHintY1;
+	int keyHintY2;
+	int keyHintX1;
+	int keyHintX2;
 	//***********************
 	
 	public Play(int state){
@@ -56,7 +69,9 @@ public class Play extends BasicGameState{
 		marketBG = new Image("res/marketBG.png");
 		monster = new Image("res/monster.png");
 		wumpusDeath = new Image("res/wumpusDeath.jpg");
-		dialog = new Image("res/dialog.png");
+		wumpusHint = new Image("res/wumpusHint.png");
+		key = new Image("res/keyHint.png");
+		keyGlow = new Image("res/keyGlow.png");
 		
 		Front = new Image("res/Front.png");
 		Back = new Image("res/Back.png");
@@ -75,17 +90,30 @@ public class Play extends BasicGameState{
 		guy = movingDown;
 		
 		generateWumpus();
+		treeCheck=0;
+		generateKey();
 		
 		//wumpus location printed to console
+		System.out.println("Wumpus Location:");
 		System.out.println(y1);
 		System.out.println(y2);
 		System.out.println(x1);
 		System.out.println(x2);
-		System.out.println();
+		System.out.println("Wumpus Hint:");
 		System.out.println(wumpusHintY1);
 		System.out.println(wumpusHintY2);
 		System.out.println(wumpusHintX1);
 		System.out.println(wumpusHintX2);
+		System.out.println("Key Location:");
+		System.out.println(keyy1);
+		System.out.println(keyy2);
+		System.out.println(keyx1);
+		System.out.println(keyx2);
+		System.out.println("Key Hint:");
+		System.out.println(keyHintY1);
+		System.out.println(keyHintY2);
+		System.out.println(keyHintX1);
+		System.out.println(keyHintX2);
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
@@ -113,15 +141,23 @@ public class Play extends BasicGameState{
 				g.clear();
 			}
 		}
-		
+		//wumpus green hint
 		if(hint==true){
-			dialog.draw(100,300);
-			g.drawString("You smell something funny...", 205, 315);
+			wumpusHint.draw(540,25);
 		}
-		
+		//puts the key on the screen
+		if(keyShow==true){
+			key.draw(530,110);
+			keyGlowShow=false;
+		}
+		//end of the game death screen
 		if(wumpusDeathShow==true){
 			g.clear();
 			wumpusDeath.draw(0,0);
+		}
+		//glow for the key hint
+		if(keyGlowShow==true){
+			keyGlow.draw(495,90);
 		}
 	}
 	
@@ -178,6 +214,16 @@ public class Play extends BasicGameState{
 			}
 			else
 				hint = false;
+			//key
+			if((guyPositionY>keyy2 && guyPositionY<keyy1) && (guyPositionX>keyx2 && guyPositionX<keyx1)){
+				keyShow = true;				
+				//guyPositionY -= delta *.1f;
+			}
+			if((guyPositionY>keyHintY2 && guyPositionY<keyHintY1) && (guyPositionX>keyHintX2 && guyPositionX<keyHintX1)){
+				keyGlowShow = true;				
+			}
+			else
+				keyGlowShow = false;
 		}
 		
 		//down
@@ -230,6 +276,16 @@ public class Play extends BasicGameState{
 			}
 			else
 				hint = false;
+			//key
+			if((guyPositionY>keyy2 && guyPositionY<keyy1) && (guyPositionX>keyx2 && guyPositionX<keyx1)){
+				keyShow = true;				
+				//guyPositionY += delta *.1f;
+			}
+			if((guyPositionY>keyHintY2 && guyPositionY<keyHintY1) && (guyPositionX>keyHintX2 && guyPositionX<keyHintX1)){
+				keyGlowShow = true;				
+			}
+			else
+				keyGlowShow = false;
 		}
 		
 		//left
@@ -282,6 +338,16 @@ public class Play extends BasicGameState{
 			}
 			else
 				hint = false;
+			//key
+			if((guyPositionY>keyy2 && guyPositionY<keyy1) && (guyPositionX>keyx2 && guyPositionX<keyx1)){
+				keyShow = true;				
+				//guyPositionX -= delta *.1f;
+			}
+			if((guyPositionY>keyHintY2 && guyPositionY<keyHintY1) && (guyPositionX>keyHintX2 && guyPositionX<keyHintX1)){
+				keyGlowShow = true;				
+			}
+			else
+				keyGlowShow = false;
 		}
 		
 		//right
@@ -334,6 +400,16 @@ public class Play extends BasicGameState{
 			}
 			else
 				hint = false;
+			//key
+			if((guyPositionY>keyy2 && guyPositionY<keyy1) && (guyPositionX>keyx2 && guyPositionX<keyx1)){
+				keyShow = true;				
+				//guyPositionX += delta *.1f;
+			}
+			if((guyPositionY>keyHintY2 && guyPositionY<keyHintY1) && (guyPositionX>keyHintX2 && guyPositionX<keyHintX1)){
+				keyGlowShow = true;				
+			}
+			else
+				keyGlowShow = false;
 		}
 		
 		//market menu
@@ -376,7 +452,7 @@ public class Play extends BasicGameState{
 		//when game is over  
 		if(wumpusDeathShow==true){
 			if(input.isKeyDown(Input.KEY_Q)){
-				sbg.enterState(0);
+				System.exit(0);
 			}
 		}
 	}
@@ -396,7 +472,7 @@ public class Play extends BasicGameState{
 			if(y1>=-800){
 				y2 = y1-25;
 			}
-			treeCheck=1;
+			treeCheck=1; //**************
 			if((y1>-467 && y1<-274) && (x1>-151 && x1<-1)){
 				treeCheck=0;
 			}
@@ -454,6 +530,82 @@ public class Play extends BasicGameState{
 		else{
 			wumpusHintX2 = x2+100;
 			wumpusHintX1 = x1-100;
+		}
+	}
+	
+	public void generateKey(){
+		while(treeCheck==0){
+			//random placement of objects logic
+			if(keyx1<-1000){
+				keyx2 = keyx1+25; 
+			}
+			if(keyx1>=-1000){
+				keyx2 = keyx1-25;
+			}
+			if(keyy1<-800){
+				keyy2 = keyy1+25; 
+			}
+			if(keyy1>=-800){
+				keyy2 = keyy1-25;
+			}
+			treeCheck=1;
+			if((keyy1>-467 && keyy1<-274) && (keyx1>-151 && keyx1<-1)){
+				treeCheck=0;
+			}
+			if((keyy1>-152 && keyy1<-9) && (keyx1>-341 && keyx1<-151)){
+				treeCheck=0;
+			}
+			if((keyy1>-622 && keyy1<-424) && (keyx1>-409 && keyx1<-212)){
+				treeCheck=0;
+			}
+			if((keyy1>-195 && keyy1<-2) && (keyx1>-766 && keyx1<-564)){
+				treeCheck=0;
+			}
+			if((keyy1>-120) && (keyx1>-1013 && keyx1<-828)){
+				treeCheck=0;
+			}
+			if((keyy1>-604 && keyy1<-420) && (keyx1>-517 && keyx1<-631)){
+				treeCheck=0;
+			}
+			if((keyy1>-413 && keyy1<-224) && (keyx1>-982 && keyx1<-797)){
+				treeCheck=0;
+			}
+			if((keyy1>-613 && keyy1<-422) && (keyx1>-819 && keyx1<-628)){
+				treeCheck=0;
+			}
+			if((keyy1>-385 && keyy1<-165) && (keyx1>-647 && keyx1<-363)){
+				treeCheck=0;
+			}
+			
+			if(keyy1<keyy2){
+				int temp; 
+				temp=keyy1;
+				keyy1=keyy2;
+				keyy2=temp;
+			}
+			if(keyx1<keyx2){
+				int temp; 
+				temp=keyx1;
+				keyx1=keyx2;
+				keyx2=temp;
+			}
+		}
+		
+		if (keyy1>keyy2){
+			keyHintY1 = keyy1+100;
+			keyHintY2 = keyy2-100;
+		}
+		else{
+			keyHintY2 = keyy2+100;
+			keyHintY1 = keyy1-100;
+		}
+		if (keyx1>keyx2){
+			keyHintX1 = keyx1+100;
+			keyHintX2 = keyx2-100;
+		}
+		else{
+			keyHintX2 = keyx2+100;
+			keyHintX1 = keyx1-100;
 		}
 	}
 	
