@@ -20,7 +20,7 @@ public class Play extends BasicGameState{
 	Image pitDeath;
 	//*******************
 	
-	//BOOLEANS***********
+	//VARIABLES***********
 	boolean wumpusDeathShow = false;
 	boolean market = false;
 	boolean quit = false;
@@ -28,7 +28,14 @@ public class Play extends BasicGameState{
 	boolean keyShow = false;
 	boolean keyGlowShow = false;
 	boolean pitShowHint = false;
+	boolean pitShowHint2 = false;
+	boolean pitShowHint3 = false;
+	boolean pitShowHint4 = false;
 	boolean pitDeadShow = false;
+	boolean fly = false;
+	boolean pit4Accept = false;
+	int notTwice=1;
+	double speedBoost=0;
 	//********************
 	
 	//AVATAR INFO*********
@@ -49,6 +56,9 @@ public class Play extends BasicGameState{
 	int keyx1, keyy1, keyx2, keyy2, keyHintY1, keyHintY2, keyHintX1, keyHintX2;
 	//Pit Generation*********
 	int pitx1, pitx2, pity1, pity2, pitHintX1, pitHintX2, pitHintY1, pitHintY2;
+	int pit2x1, pit2x2, pit2y1, pit2y2, pit2HintX1, pit2HintX2, pit2HintY1, pit2HintY2;
+	int pit3x1, pit3x2, pit3y1, pit3y2, pit3HintX1, pit3HintX2, pit3HintY1, pit3HintY2;
+	int pit4x1, pit4x2, pit4y1, pit4y2, pit4HintX1, pit4HintX2, pit4HintY1, pit4HintY2;
 	//***********************
 	
 	public Play(int state){
@@ -85,10 +95,13 @@ public class Play extends BasicGameState{
 		//OBJECT CREATIONS*******************************************************************************
 		creation wumpus[] = new creation[1];
 		creation keyObject[] = new creation[1];
-		creation pit[] = new creation[1];
+		creation pit[] = new creation[4];
 		wumpus[0] = new creation();
 		keyObject[0] = new creation();
 		pit[0] = new creation();
+		pit[1] = new creation();
+		pit[2] = new creation();
+		pit[3] = new creation();
 		
 		wumpus[0].generateKey();
 		x1 = wumpus[0].getX1(); x2 = wumpus[0].getX2(); y1 = wumpus[0].getY1(); y2 = wumpus[0].getY2();
@@ -104,39 +117,30 @@ public class Play extends BasicGameState{
 		pitx1 = pit[0].getX1(); pitx2 = pit[0].getX2(); pity1 = pit[0].getY1(); pity2 = pit[0].getY2();
 		pitHintY1 = pit[0].getHintY1(); pitHintY2 = pit[0].getHintY2();
 		pitHintX1 = pit[0].getHintX1(); pitHintX2 = pit[0].getHintX2();
+		
+		pit[1].generateKey();
+		pit2x1 = pit[1].getX1(); pit2x2 = pit[1].getX2(); pit2y1 = pit[1].getY1(); pit2y2 = pit[1].getY2();
+		pit2HintY1 = pit[1].getHintY1(); pit2HintY2 = pit[1].getHintY2();
+		pit2HintX1 = pit[1].getHintX1(); pit2HintX2 = pit[1].getHintX2();
+		
+		pit[2].generateKey();
+		pit3x1 = pit[2].getX1(); pit3x2 = pit[2].getX2(); pit3y1 = pit[2].getY1(); pit3y2 = pit[2].getY2();
+		pit3HintY1 = pit[2].getHintY1(); pit3HintY2 = pit[2].getHintY2();
+		pit3HintX1 = pit[2].getHintX1(); pit3HintX2 = pit[2].getHintX2();
+		
+		pit[3].generateKey();
+		pit4x1 = pit[3].getX1(); pit4x2 = pit[3].getX2(); pit4y1 = pit[3].getY1(); pit4y2 = pit[3].getY2();
+		pit4HintY1 = pit[3].getHintY1(); pit4HintY2 = pit[3].getHintY2();
+		pit4HintX1 = pit[3].getHintX1(); pit4HintX2 = pit[3].getHintX2();
 		//**************************************************************************************************
 		
 		//wumpus location printed to console
-		System.out.println("Wumpus Location:");
-		System.out.println(y1);
-		System.out.println(y2);
-		System.out.println(x1);
-		System.out.println(x2);
-		System.out.println("Wumpus Hint:");
-		System.out.println(wumpusHintY1);
-		System.out.println(wumpusHintY2);
-		System.out.println(wumpusHintX1);
-		System.out.println(wumpusHintX2);
-		System.out.println("Key Location:");
-		System.out.println(keyy1);
-		System.out.println(keyy2);
-		System.out.println(keyx1);
-		System.out.println(keyx2);
-		System.out.println("p Hint:");
-		System.out.println(keyHintY1);
-		System.out.println(keyHintY2);
-		System.out.println(keyHintX1);
-		System.out.println(keyHintX2);
-		System.out.println("Pit Location:");
-		System.out.println(pity1);
-		System.out.println(pity2);
-		System.out.println(pitx1);
-		System.out.println(pitx2);
-		System.out.println("Pit Hint:");
-		System.out.println(pitHintY1);
-		System.out.println(pitHintY2);
-		System.out.println(pitHintX1);
-		System.out.println(pitHintX2);
+		wumpus[0].print();
+		keyObject[0].print();
+		pit[0].print();
+		pit[1].print();
+		pit[2].print();
+		pit[3].print();
 	}
 	
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
@@ -157,14 +161,23 @@ public class Play extends BasicGameState{
 		if(market==true){
 			marketBG.draw(205,50);
 			g.drawString("Welcome to the Market!", 260, 65);
-			g.drawString("Buy Some Arrows (A)", 260, 120);
-			g.drawString("Buy Some Markers (M)", 260, 170);
+			g.drawString("Ability to Fly (F)", 260, 120);
+			g.drawString("Increase your Speed (S)", 260, 170);
 			g.drawString("Resume (R)", 260, 220);
 			if(market==false){
 				g.clear();
 			}
 		}
 		if(pitShowHint==true){
+			pit.draw(540, 165);
+		}
+		if(pitShowHint2==true){
+			pit.draw(540, 165);
+		}
+		if(pitShowHint3==true){
+			pit.draw(540, 165);
+		}
+		if(pitShowHint4==true){
 			pit.draw(540, 165);
 		}
 		//wumpus green hint
@@ -192,43 +205,48 @@ public class Play extends BasicGameState{
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException{
 		Input input = gc.getInput();
-				
 		//up
 		if(input.isKeyDown(Input.KEY_UP)){
 			guy = movingUp;
-			guyPositionY += delta *.1f;
+			guyPositionY += delta *.1f + speedBoost;
 			if(guyPositionY>-3.4){
-				guyPositionY -= delta *.1f;
+				guyPositionY -= delta *.1f + speedBoost;
 			}
-			
-			//trees
-			if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
-				guyPositionY -= delta *.1f;
-			}
-			if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
-				guyPositionY -= delta *.1f;
-			}
-			if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
-				guyPositionY -= delta *.1f;
-			}
-			if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
-				guyPositionY -= delta *.1f;
-			}
-			if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
-				guyPositionY -= delta *.1f;
-			}
-			if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
-				guyPositionY -= delta *.1f;
-			}
-			if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
-				guyPositionY -= delta *.1f;
-			}
-			if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
-				guyPositionY -= delta *.1f;
+			if(fly==false){
+				//trees
+				if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
+					guyPositionY -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+					if(keyShow=true){
+						sbg.enterState(0);
+					}
+				}
 			}
 			//market
 			if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
-				guyPositionY -= delta *.1f;
+				guyPositionY -= delta *.1f + speedBoost;
 				market = true;
 			}
 			else
@@ -236,7 +254,7 @@ public class Play extends BasicGameState{
 			//wump
 			if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 				wumpusDeathShow = true;				
-				guyPositionY -= delta *.1f;
+				guyPositionY -= delta *.1f + speedBoost;
 			}
 			if((guyPositionY>wumpusHintY2 && guyPositionY<wumpusHintY1) && (guyPositionX>wumpusHintX2 && guyPositionX<wumpusHintX1)){
 				hint = true;				
@@ -262,44 +280,80 @@ public class Play extends BasicGameState{
 			}
 			else
 				pitShowHint = false;
+			//pit2
+			if((guyPositionY>pit2y2 && guyPositionY<pit2y1) && (guyPositionX>pit2x2 && guyPositionX<pit2x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit2HintY2 && guyPositionY<pit2HintY1) && (guyPositionX>pit2HintX2 && guyPositionX<pit2HintX1)){
+				pitShowHint2 = true;				
+			}
+			else
+				pitShowHint2 = false;
+			//pit3
+			if((guyPositionY>pit3y2 && guyPositionY<pit3y1) && (guyPositionX>pit3x2 && guyPositionX<pit3x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit3HintY2 && guyPositionY<pit3HintY1) && (guyPositionX>pit3HintX2 && guyPositionX<pit3HintX1)){
+				pitShowHint3 = true;				
+			}
+			else
+				pitShowHint3 = false;
+			//pit4
+			if(pit4Accept=true){
+				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
+					pitDeadShow = true;				
+				}
+				if((guyPositionY>pit4HintY2 && guyPositionY<pit4HintY1) && (guyPositionX>pit4HintX2 && guyPositionX<pit4HintX1)){
+					pitShowHint4 = true;				
+				}
+				else
+					pitShowHint4 = false;
+			}
 		}
 		
 		//down
 		if(input.isKeyDown(Input.KEY_DOWN)){
 			guy = movingDown;
-			guyPositionY -= delta *.1f;
+			guyPositionY -= delta *.1f + speedBoost;
 			if(guyPositionY<-850){
-				guyPositionY += delta *.1f; 
+				guyPositionY += delta *.1f + speedBoost; 
 			}
 			
-			//trees
-			if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
-				guyPositionY += delta *.1f;
-			}
-			if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
-				guyPositionY += delta *.1f;
-			}
-			if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
-				guyPositionY += delta *.1f;
-			}
-			if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
-				guyPositionY += delta *.1f;
-			}
-			if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
-				guyPositionY += delta *.1f;
-			}
-			if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
-				guyPositionY += delta *.1f;
-			}	
-			if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
-				guyPositionY += delta *.1f;
-			}
-			if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
-				guyPositionY += delta *.1f;
+			if(fly==false){
+				//trees
+				if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
+					guyPositionY += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
+					guyPositionY += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
+					guyPositionY += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
+					guyPositionY += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
+					guyPositionY += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
+					guyPositionY += delta *.1f + speedBoost;
+				}	
+				if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
+					guyPositionY += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
+					guyPositionY += delta *.1f + speedBoost;
+				}
+				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+					if(keyShow=true){
+						sbg.enterState(0);
+					}
+				}
 			}
 			//market
 			if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
-				guyPositionY += delta *.1f;
+				guyPositionY += delta *.1f + speedBoost;
 				market = true;
 			}
 			else
@@ -307,7 +361,7 @@ public class Play extends BasicGameState{
 			//wump
 			if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 				wumpusDeathShow = true;
-				guyPositionY += delta *.1f;
+				guyPositionY += delta *.1f + speedBoost;
 			}
 			if((guyPositionY>wumpusHintY2 && guyPositionY<wumpusHintY1) && (guyPositionX>wumpusHintX2 && guyPositionX<wumpusHintX1)){
 				hint = true;				
@@ -333,44 +387,80 @@ public class Play extends BasicGameState{
 			}
 			else
 				pitShowHint = false;
+			//pit2
+			if((guyPositionY>pit2y2 && guyPositionY<pit2y1) && (guyPositionX>pit2x2 && guyPositionX<pit2x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit2HintY2 && guyPositionY<pit2HintY1) && (guyPositionX>pit2HintX2 && guyPositionX<pit2HintX1)){
+				pitShowHint2 = true;				
+			}
+			else
+				pitShowHint2 = false;
+			//pit3
+			if((guyPositionY>pit3y2 && guyPositionY<pit3y1) && (guyPositionX>pit3x2 && guyPositionX<pit3x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit3HintY2 && guyPositionY<pit3HintY1) && (guyPositionX>pit3HintX2 && guyPositionX<pit3HintX1)){
+				pitShowHint3 = true;				
+			}
+			else
+				pitShowHint3 = false;
+			//pit4
+			if(pit4Accept=true){
+				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
+					pitDeadShow = true;				
+				}
+				if((guyPositionY>pit4HintY2 && guyPositionY<pit4HintY1) && (guyPositionX>pit4HintX2 && guyPositionX<pit4HintX1)){
+					pitShowHint4 = true;				
+				}
+				else
+					pitShowHint4 = false;
+			}
 		}
 		
 		//left
 		if(input.isKeyDown(Input.KEY_LEFT)){
 			guy = movingLeft;
-			guyPositionX += delta *.1f;
+			guyPositionX += delta *.1f + speedBoost;
 			if(guyPositionX>-1.4){
-				guyPositionX -= delta *.1f;
+				guyPositionX -= delta *.1f + speedBoost;
 			}
 			
-			//trees
-			if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
-				guyPositionX -= delta *.1f;
-			}
-			if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
-				guyPositionX -= delta *.1f;
-			}
-			if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
-				guyPositionX -= delta *.1f;
-			}
-			if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
-				guyPositionX -= delta *.1f;
-			}
-			if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
-				guyPositionX -= delta *.1f;
-			}
-			if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
-				guyPositionX -= delta *.1f;
-			}
-			if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
-				guyPositionX -= delta *.1f;
-			}
-			if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
-				guyPositionX -= delta *.1f;
+			if(fly==false){
+				//trees
+				if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
+					guyPositionX -= delta *.1f + speedBoost;
+				}
+				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+					if(keyShow=true){
+						sbg.enterState(0);
+					}
+				}
 			}
 			//market
 			if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
-				guyPositionX -= delta *.1f;
+				guyPositionX -= delta *.1f + speedBoost;
 				market = true;
 			}
 			else
@@ -378,7 +468,7 @@ public class Play extends BasicGameState{
 			//wump
 			if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 				wumpusDeathShow = true;
-				guyPositionX -= delta *.1f;
+				guyPositionX -= delta *.1f + speedBoost;
 			}
 			if((guyPositionY>wumpusHintY2 && guyPositionY<wumpusHintY1) && (guyPositionX>wumpusHintX2 && guyPositionX<wumpusHintX1)){
 				hint = true;				
@@ -404,44 +494,80 @@ public class Play extends BasicGameState{
 			}
 			else
 				pitShowHint = false;
+			//pit2
+			if((guyPositionY>pit2y2 && guyPositionY<pit2y1) && (guyPositionX>pit2x2 && guyPositionX<pit2x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit2HintY2 && guyPositionY<pit2HintY1) && (guyPositionX>pit2HintX2 && guyPositionX<pit2HintX1)){
+				pitShowHint2 = true;				
+			}
+			else
+				pitShowHint2 = false;
+			//pit3
+			if((guyPositionY>pit3y2 && guyPositionY<pit3y1) && (guyPositionX>pit3x2 && guyPositionX<pit3x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit3HintY2 && guyPositionY<pit3HintY1) && (guyPositionX>pit3HintX2 && guyPositionX<pit3HintX1)){
+				pitShowHint3 = true;				
+			}
+			else
+				pitShowHint3 = false;
+			//pit4
+			if(pit4Accept=true){
+				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
+					pitDeadShow = true;				
+				}
+				if((guyPositionY>pit4HintY2 && guyPositionY<pit4HintY1) && (guyPositionX>pit4HintX2 && guyPositionX<pit4HintX1)){
+					pitShowHint4 = true;				
+				}
+				else
+					pitShowHint4 = false;
+			}
 		}
 		
 		//right
 		if(input.isKeyDown(Input.KEY_RIGHT)){
 			guy = movingRight;
-			guyPositionX -= delta *.1f;
+			guyPositionX -= delta *.1f + speedBoost;
 			if(guyPositionX<-1050){
-				guyPositionX += delta *.1f;
+				guyPositionX += delta *.1f + speedBoost;
 			}
 			
-			//trees
-			if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
-				guyPositionX += delta *.1f;
-			}
-			if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
-				guyPositionX += delta *.1f;
-			}
-			if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
-				guyPositionX += delta *.1f;
-			}
-			if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
-				guyPositionX += delta *.1f;
-			}
-			if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
-				guyPositionX += delta *.1f;
-			}
-			if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
-				guyPositionX += delta *.1f;
-			}
-			if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
-				guyPositionX += delta *.1f;
-			}
-			if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
-				guyPositionX += delta *.1f;
+			if(fly==false){
+				//trees
+				if((guyPositionY>-442 && guyPositionY<-299) && (guyPositionX>-126 && guyPositionX<-1)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-152 && guyPositionY<-9) && (guyPositionX>-316 && guyPositionX<-176)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-597 && guyPositionY<-449) && (guyPositionX>-384 && guyPositionX<-237)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-172 && guyPositionY<-27) && (guyPositionX>-741 && guyPositionX<-589)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-95) && (guyPositionX>-988 && guyPositionX<-853)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-579 && guyPositionY<-445) && (guyPositionX>-492 && guyPositionX<-656)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-388 && guyPositionY<-249) && (guyPositionX>-957 && guyPositionX<-822)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
+					guyPositionX += delta *.1f + speedBoost;
+				}
+				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+					if(keyShow=true){
+						sbg.enterState(0);
+					}
+				}
 			}
 			//market
 			if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
-				guyPositionX += delta *.1f;
+				guyPositionX += delta *.1f + speedBoost;
 				market = true;
 			}
 			else 
@@ -449,7 +575,7 @@ public class Play extends BasicGameState{
 			//wump
 			if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 				wumpusDeathShow = true;
-				guyPositionX += delta *.1f;
+				guyPositionX += delta *.1f + speedBoost;
 			}
 			if((guyPositionY>wumpusHintY2 && guyPositionY<wumpusHintY1) && (guyPositionX>wumpusHintX2 && guyPositionX<wumpusHintX1)){
 				hint = true;				
@@ -475,15 +601,56 @@ public class Play extends BasicGameState{
 			}
 			else
 				pitShowHint = false;
+			//pit2
+			if((guyPositionY>pit2y2 && guyPositionY<pit2y1) && (guyPositionX>pit2x2 && guyPositionX<pit2x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit2HintY2 && guyPositionY<pit2HintY1) && (guyPositionX>pit2HintX2 && guyPositionX<pit2HintX1)){
+				pitShowHint2 = true;				
+			}
+			else
+				pitShowHint2 = false;
+			//pit3
+			if((guyPositionY>pit3y2 && guyPositionY<pit3y1) && (guyPositionX>pit3x2 && guyPositionX<pit3x1)){
+				pitDeadShow = true;				
+			}
+			if((guyPositionY>pit3HintY2 && guyPositionY<pit3HintY1) && (guyPositionX>pit3HintX2 && guyPositionX<pit3HintX1)){
+				pitShowHint3 = true;				
+			}
+			else
+				pitShowHint3 = false;
+			//pit4
+			if(pit4Accept=true){
+				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
+					pitDeadShow = true;				
+				}
+				if((guyPositionY>pit4HintY2 && guyPositionY<pit4HintY1) && (guyPositionX>pit4HintX2 && guyPositionX<pit4HintX1)){
+					pitShowHint4 = true;				
+				}
+				else
+					pitShowHint4 = false;
+			}
 		}
 		
 		//market menu
 		if(market==true){
-			if(input.isKeyDown(Input.KEY_B)){
-				//replenish arrows
+			if(input.isKeyDown(Input.KEY_F)){
+				fly = true;
+				market = false;
+				//If the player chooses to fly the wumpus grows in size 
+				//notTwice makes it so if they choose fly option again it doens't grow anymore
+				if(notTwice==1){
+					y1 = y1+100;
+					y2 = y2-100;
+					x1 = x1+100;
+					x2 = x2-100;
+					notTwice++;
+				}
 			}
-			if(input.isKeyDown(Input.KEY_M)){
-				//replenish markers
+			if(input.isKeyDown(Input.KEY_S)){
+				speedBoost = .2;
+				market = false;
+				pit4Accept = true;
 			}
 			if(input.isKeyDown(Input.KEY_R)){
 				market = false;

@@ -15,16 +15,16 @@ public class creation {
 		while(treeCheck==0){
 			//random placement of objects logic
 			if(x1<-1000){
-				x2 = x1+50; 
+				x2 = x1+75; 
 			}
 			if(x1>=-1000){
-				x2 = x1-50;
+				x2 = x1-75;
 			}
 			if(y1<-800){
-				y2 = y1+50; 
+				y2 = y1+75; 
 			}
 			if(y1>=-800){
-				y2 = y1-50;
+				y2 = y1-75;
 			}
 			treeCheck=1;
 			if((y1>-467 && y1<-274) && (x1>-151 && x1<-1)){
@@ -54,7 +54,7 @@ public class creation {
 			if((y1>-385 && y1<-165) && (x1>-647 && x1<-363)){
 				treeCheck=0;
 			}
-			
+			treeCheck=1;
 			if(y1<y2){
 				int temp; 
 				temp=y1;
@@ -112,12 +112,12 @@ public class creation {
 		return this.HintY2;
 	}
 	public void print(){
-		System.out.println("Wumpus Location:");
+		System.out.println("Location:");
 		System.out.println(y1);
 		System.out.println(y2);
 		System.out.println(x1);
 		System.out.println(x2);
-		System.out.println("Wumpus Hint:");
+		System.out.println("Hint:");
 		System.out.println(HintY1);
 		System.out.println(HintY2);
 		System.out.println(HintX1);
