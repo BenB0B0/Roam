@@ -238,10 +238,10 @@ public class Play extends BasicGameState{
 				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
 					guyPositionY -= delta *.1f + speedBoost;
 				}
-				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
-					if(keyShow=true){
-						sbg.enterState(0);
-					}
+			}
+			if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+				if(keyShow=true){
+					sbg.enterState(0);
 				}
 			}
 			//market
@@ -345,10 +345,10 @@ public class Play extends BasicGameState{
 				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
 					guyPositionY += delta *.1f + speedBoost;
 				}
-				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
-					if(keyShow=true){
-						sbg.enterState(0);
-					}
+			}
+			if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+				if(keyShow=true){
+					sbg.enterState(0);
 				}
 			}
 			//market
@@ -452,10 +452,10 @@ public class Play extends BasicGameState{
 				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
 					guyPositionX -= delta *.1f + speedBoost;
 				}
-				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
-					if(keyShow=true){
-						sbg.enterState(0);
-					}
+			}
+			if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+				if(keyShow=true){
+					sbg.enterState(0);
 				}
 			}
 			//market
@@ -559,10 +559,10 @@ public class Play extends BasicGameState{
 				if((guyPositionY>-588 && guyPositionY<-447) && (guyPositionX>-794 && guyPositionX<-653)){
 					guyPositionX += delta *.1f + speedBoost;
 				}
-				if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
-					if(keyShow=true){
-						sbg.enterState(0);
-					}
+			}
+			if((guyPositionY<-142 && guyPositionY>-213) && (guyPositionX<-1049)){
+				if(keyShow=true){
+					sbg.enterState(0);
 				}
 			}
 			//market
