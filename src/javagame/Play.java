@@ -8,16 +8,7 @@ public class Play extends BasicGameState{
 	Animation guy, movingUp, movingDown, movingLeft, movingRight;
 	
 	//PICTURES***********
-	Image worldMap;
-	Image espBG;
-	Image marketBG;
-	Image monster;
-	Image wumpusDeath;
-	Image wumpusHint;
-	Image key;
-	Image keyGlow;
-	Image pit;
-	Image pitDeath;
+	Image worldMap, espBG, marketBG, monster, wumpusDeath, wumpusHint, key, keyGlow, pit, pitDeath, dialogPit, dialogWumpus;
 	//*******************
 	
 	//VARIABLES***********
@@ -32,6 +23,8 @@ public class Play extends BasicGameState{
 	boolean pitShowHint3 = false;
 	boolean pitShowHint4 = false;
 	boolean pitDeadShow = false;
+	boolean dialogPitShow = false;
+	boolean dialogWumpusShow = false;
 	boolean fly = false;
 	boolean pit4Accept = false;
 	int notTwice=1;
@@ -75,6 +68,8 @@ public class Play extends BasicGameState{
 		keyGlow = new Image("res/keyGlow.png");
 		pit = new Image("res/pit.png");
 		pitDeath = new Image("res/pitdeath.jpg");
+		dialogPit = new Image("res/dialogPit.png");
+		dialogWumpus = new Image("res/dialogWumpus.png");
 		
 		Front = new Image("res/Front.png");
 		Back = new Image("res/Back.png");
@@ -159,15 +154,23 @@ public class Play extends BasicGameState{
 		}
 		
 		if(market==true){
-			marketBG.draw(205,50);
-			g.drawString("Welcome to the Market!", 260, 65);
-			g.drawString("Ability to Fly (F)", 260, 120);
-			g.drawString("Increase your Speed (S)", 260, 170);
-			g.drawString("Resume (R)", 260, 220);
+			marketBG.draw(175,30);
+			g.drawString("Welcome to the Market!", 230, 38);
+			g.drawString("Ability to Fly (F)", 243, 75);
+			g.drawString("Increase your Speed (S)", 230, 105);
+			g.drawString("Resume (R)", 278, 135);
 			if(market==false){
 				g.clear();
 			}
+			if(dialogWumpusShow==true){
+				dialogWumpus.draw(70, 200);
+			}
+				
+			if(dialogPitShow==true){
+				dialogPit.draw(335,200);
+			}
 		}
+		
 		if(pitShowHint==true){
 			pit.draw(540, 165);
 		}
@@ -299,7 +302,7 @@ public class Play extends BasicGameState{
 			else
 				pitShowHint3 = false;
 			//pit4
-			if(pit4Accept=true){
+			if(pit4Accept==true){
 				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
 					pitDeadShow = true;				
 				}
@@ -406,7 +409,7 @@ public class Play extends BasicGameState{
 			else
 				pitShowHint3 = false;
 			//pit4
-			if(pit4Accept=true){
+			if(pit4Accept==true){
 				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
 					pitDeadShow = true;				
 				}
@@ -513,7 +516,7 @@ public class Play extends BasicGameState{
 			else
 				pitShowHint3 = false;
 			//pit4
-			if(pit4Accept=true){
+			if(pit4Accept==true){
 				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
 					pitDeadShow = true;				
 				}
@@ -620,7 +623,7 @@ public class Play extends BasicGameState{
 			else
 				pitShowHint3 = false;
 			//pit4
-			if(pit4Accept=true){
+			if(pit4Accept==true){
 				if((guyPositionY>pit4y2 && guyPositionY<pit4y1) && (guyPositionX>pit4x2 && guyPositionX<pit4x1)){
 					pitDeadShow = true;				
 				}
@@ -636,7 +639,7 @@ public class Play extends BasicGameState{
 		if(market==true){
 			if(input.isKeyDown(Input.KEY_F)){
 				fly = true;
-				market = false;
+				dialogWumpusShow = true;
 				//If the player chooses to fly the wumpus grows in size 
 				//notTwice makes it so if they choose fly option again it doens't grow anymore
 				if(notTwice==1){
@@ -649,7 +652,7 @@ public class Play extends BasicGameState{
 			}
 			if(input.isKeyDown(Input.KEY_S)){
 				speedBoost = .2;
-				market = false;
+				dialogPitShow = true;
 				pit4Accept = true;
 			}
 			if(input.isKeyDown(Input.KEY_R)){
