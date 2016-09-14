@@ -47,7 +47,6 @@ public class Menu extends BasicGameState{
 				System.exit(0);
 			}
 		}
-		
 	}
 	
 	public int getID(){

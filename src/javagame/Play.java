@@ -2,7 +2,12 @@ package javagame;
 
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
+import org.newdawn.slick.Sound;
 
+import javagame.Game;
+ 
 public class Play extends BasicGameState{
 
 	Animation guy, movingUp, movingDown, movingLeft, movingRight;
@@ -10,6 +15,11 @@ public class Play extends BasicGameState{
 	//PICTURES***********
 	Image worldMap, espBG, marketBG, monster, wumpusDeath, wumpusHint, key, keyGlow, pit, pitDeath, dialogPit, dialogWumpus, dialogShuttle;
 	//*******************
+	
+	private Music BGmusic; 
+	private Sound keyNoise;
+	private Sound wumpusNoise;
+	private Sound pitNoise;
 	
 	//VARIABLES***********
 	boolean wumpusDeathShow = false;
@@ -30,6 +40,10 @@ public class Play extends BasicGameState{
 	int notTwice=1;
 	double speedBoost=0;
 	boolean guyExist = true; 
+	boolean mute = false;
+	int keyNoisePlay = 1;
+	int pitNoisePlay = 1;
+	int wumpusNoisePlay = 1;
 	//********************
 	
 	//AVATAR INFO*********
@@ -72,6 +86,12 @@ public class Play extends BasicGameState{
 		dialogPit = new Image("res/dialogPit.png");
 		dialogWumpus = new Image("res/dialogWumpus.png");
 		dialogShuttle = new Image("res/dialogShuttle.png");
+		
+		BGmusic = new Music("res/backGroundMusic.ogg");
+		BGmusic.loop();
+		keyNoise = new Sound("res/key.ogg");
+		pitNoise = new Sound("res/pitSound.ogg");
+		wumpusNoise = new Sound("res/wumpusSound.ogg");
 		
 		Front = new Image("res/Front.png");
 		Back = new Image("res/Back.png");
@@ -148,15 +168,16 @@ public class Play extends BasicGameState{
 		}
 		else{
 			guy.draw(1000,1000);
-			dialogShuttle.draw(200,300);
+			dialogShuttle.draw(200,50);
 		}
 		
 		
 		if(quit==true){
 			espBG.draw(210,50);
-			g.drawString("Resume (R)", 250, 100);
-			g.drawString("Main Menu (M)", 250, 150);
-			g.drawString("Quit Game (Q)", 250, 200);
+			g.drawString("Resume (R)", 225, 65);
+			g.drawString("Main Menu (Backspace)", 225, 115);
+			g.drawString("Mute Background Music (M)", 225, 165);
+			g.drawString("Quit Game (Q)", 225, 215);
 			if(quit==false){
 				g.clear();
 			}
@@ -181,16 +202,16 @@ public class Play extends BasicGameState{
 		}
 		
 		if(pitShowHint==true){
-			pit.draw(540, 165);
+			pit.draw(540, 178);
 		}
 		if(pitShowHint2==true){
-			pit.draw(540, 165);
+			pit.draw(540, 178);
 		}
 		if(pitShowHint3==true){
-			pit.draw(540, 165);
+			pit.draw(540, 178);
 		}
 		if(pitShowHint4==true){
-			pit.draw(540, 165);
+			pit.draw(540, 178);
 		}
 		//wumpus green hint
 		if(hint==true){
@@ -199,6 +220,10 @@ public class Play extends BasicGameState{
 		//puts the key on the screen
 		if(keyShow==true){
 			key.draw(530,110);
+			if(keyNoisePlay == 1){
+				keyNoise.play();
+				keyNoisePlay++;
+			}
 			keyGlowShow=false;
 		}
 		//glow for the key hint
@@ -207,16 +232,60 @@ public class Play extends BasicGameState{
 		}
 		//end of the game death screen - pit
 		if(pitDeadShow==true){
+			if(pitNoisePlay == 1){
+				pitNoise.play();
+				pitNoisePlay++;
+			}
 			pitDeath.draw(0,0);
 		}
 		//end of the game death screen - wumpus
 		if(wumpusDeathShow==true){
+			if(wumpusNoisePlay == 1){
+				wumpusNoise.play();
+				pitNoisePlay++;
+			}
 			wumpusDeath.draw(0,0);
 		}
+		
+		if(mute==true){
+			BGmusic.stop();
+		}
+		g.drawString("Restart The Game (P)", 220, 335);
 	}
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException{
 		Input input = gc.getInput();
+
+		//Resets Game
+        if(input.isKeyPressed( Input.KEY_P ))
+        {
+            sbg.getState( Game.play ).init(gc, sbg);
+            sbg.enterState( Game.play );
+            guyPositionX = 0;
+        	guyPositionY = 0;
+        	wumpusDeathShow = false;
+        	market = false;
+        	quit = false;
+        	hint = false;
+        	keyShow = false;
+        	keyGlowShow = false;
+        	pitShowHint = false;
+        	pitShowHint2 = false;
+        	pitShowHint3 = false;
+        	pitShowHint4 = false;
+        	pitDeadShow = false;
+        	dialogPitShow = false;
+        	dialogWumpusShow = false;
+        	fly = false;
+        	pit4Accept = false;
+        	notTwice=1;
+        	speedBoost=0;
+        	guyExist = true; 
+        	pitNoisePlay = 1; 
+        	keyNoisePlay = 1;
+        	wumpusNoisePlay = 1;
+        }		
+        
 		if(guyExist==true){
 			//up
 			if(input.isKeyDown(Input.KEY_UP)){		
@@ -657,7 +726,7 @@ public class Play extends BasicGameState{
 		//Space Ship Takes Off
 		if(input.isKeyDown(Input.KEY_SPACE)){	
 			if(guyExist==false){
-				sbg.enterState(3); 
+				  sbg.enterState(4, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000)); 
 			}
 		}
 		
@@ -699,11 +768,14 @@ public class Play extends BasicGameState{
 			if(input.isKeyDown(Input.KEY_R)){
 				quit = false;
 			}
-			if(input.isKeyDown(Input.KEY_M)){
+			if(input.isKeyDown(Input.KEY_BACK)){
 				sbg.enterState(0);
 			}
 			if(input.isKeyDown(Input.KEY_Q)){
 				System.exit(0);
+			}
+			if(input.isKeyDown(Input.KEY_M)){
+				mute = true;
 			}
 			if(input.isKeyDown(Input.KEY_N)){
 				sbg.enterState(2);

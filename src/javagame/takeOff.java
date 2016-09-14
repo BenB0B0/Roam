@@ -2,31 +2,30 @@ package javagame;
 
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 
-public class secondStage extends BasicGameState{
+public class takeOff extends BasicGameState{
 
 	Animation guy, movingUp, movingDown, movingLeft, movingRight;
 	Image worldMap;
 	Image espBG;
 	boolean quit = false; 
 	int[] duration = {200,200};
-	float guyPositionX = 0;
-	float guyPositionY = -154;
-	float shiftX = guyPositionX + 320;
-	float shiftY = guyPositionY + 314;
+	float guyPositionX = -1034;
+	float guyPositionY = -185;
+	float shiftX = guyPositionX + 1354;
+	float shiftY = guyPositionY + 345;
 	Image Front;
 	Image Back;
 	Image Left;
 	Image Right;
 	
-	boolean shipFlying = true; 
-	
-	public secondStage(int state){
+	public takeOff(int state){
 	}
 	
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException{
-		worldMap = new Image("res/secondWorld.png");
+		worldMap = new Image("res/takeoffWorld.png");
 		espBG = new Image("res/espBG.png");
 		Front = new Image("res/ship.png");
 		Back = new Image("res/ship.png");
@@ -59,79 +58,22 @@ public class secondStage extends BasicGameState{
 				g.clear();
 			}
 		}
-		
-		if(guyPositionY > -3.5){
-			shipFlying = false;
-		}
 	}
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException{
-		Input input = gc.getInput();
-		
-		if(shipFlying == true){
+	
 			guy = movingUp;
 			guyPositionY += delta *.1f;
 			if(guyPositionY>-3.4){
 				guyPositionY -= delta *.1f;
 			}
-		}
-		
-		//up
-		if(input.isKeyDown(Input.KEY_UP)){
-			guy = movingUp;
-			guyPositionY += delta *.1f;
-			if(guyPositionY>-3.4){
-				guyPositionY -= delta *.1f;
+			
+			if(guyPositionY > -3.5){
+				sbg.enterState(5, new FadeOutTransition(Color.white, 1000), null);  
 			}
-		}
-		
-		//down
-		if(input.isKeyDown(Input.KEY_DOWN)){
-			guy = movingDown;
-			guyPositionY -= delta *.1f;
-			if(guyPositionY<-850){
-				guyPositionY += delta *.1f; 
-			}
-		}
-		
-		//left
-		if(input.isKeyDown(Input.KEY_LEFT)){
-			guy = movingLeft;
-			guyPositionX += delta *.1f;
-			if(guyPositionX>-1.4){
-				guyPositionX -= delta *.1f;
-			}
-		}
-		
-		//right
-		if(input.isKeyDown(Input.KEY_RIGHT)){
-			guy = movingRight;
-			guyPositionX -= delta *.1f;
-			if(guyPositionX<-1050){
-				guyPositionX += delta *.1f;
-			}
-		}
-		//escape
-		if(input.isKeyDown(Input.KEY_ESCAPE)){
-			quit = true;
-		}
-		
-		//when the menu is up
-		if(quit==true){
-			if(input.isKeyDown(Input.KEY_R)){
-				quit = false;
-			}
-			if(input.isKeyDown(Input.KEY_M)){
-				sbg.enterState(0);
-			}
-			if(input.isKeyDown(Input.KEY_Q)){
-				System.exit(0);
-			}
-		}
 	}
 	
 	public int getID(){
-		return 3;
+		return 4;
 	}
 }
-
