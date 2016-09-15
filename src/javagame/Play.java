@@ -13,13 +13,15 @@ public class Play extends BasicGameState{
 	Animation guy, movingUp, movingDown, movingLeft, movingRight;
 	
 	//PICTURES***********
-	Image worldMap, espBG, marketBG, monster, wumpusDeath, wumpusHint, key, keyGlow, pit, pitDeath, dialogPit, dialogWumpus, dialogShuttle;
+	Image worldMap, espBG, marketBG, monster, wumpusDeath, wumpusHint, key, keyGlow, pit, pitDeath, dialogPit, 
+		  dialogWumpus, dialogShuttle, interactBack;
 	//*******************
 	
 	private Music BGmusic; 
 	private Sound keyNoise;
 	private Sound wumpusNoise;
 	private Sound pitNoise;
+	private Sound shipNoise;
 	
 	//VARIABLES***********
 	boolean wumpusDeathShow = false;
@@ -35,6 +37,7 @@ public class Play extends BasicGameState{
 	boolean pitDeadShow = false;
 	boolean dialogPitShow = false;
 	boolean dialogWumpusShow = false;
+	boolean marketShow = false;
 	boolean fly = false;
 	boolean pit4Accept = false;
 	int notTwice=1;
@@ -44,6 +47,7 @@ public class Play extends BasicGameState{
 	int keyNoisePlay = 1;
 	int pitNoisePlay = 1;
 	int wumpusNoisePlay = 1;
+	int wizardVisit = 0;
 	//********************
 	
 	//AVATAR INFO*********
@@ -86,12 +90,14 @@ public class Play extends BasicGameState{
 		dialogPit = new Image("res/dialogPit.png");
 		dialogWumpus = new Image("res/dialogWumpus.png");
 		dialogShuttle = new Image("res/dialogShuttle.png");
+		interactBack = new Image("res/interactBack.png");
 		
 		BGmusic = new Music("res/backGroundMusic.ogg");
 		BGmusic.loop();
 		keyNoise = new Sound("res/key.ogg");
 		pitNoise = new Sound("res/pitSound.ogg");
 		wumpusNoise = new Sound("res/wumpusSound.ogg");
+		shipNoise = new Sound("res/shipSound.ogg");
 		
 		Front = new Image("res/Front.png");
 		Back = new Image("res/Back.png");
@@ -171,7 +177,14 @@ public class Play extends BasicGameState{
 			dialogShuttle.draw(200,50);
 		}
 		
-		
+		if(marketShow==true){
+			if(market==false){
+				interactBack.draw(260,305);
+				g.setColor(Color.red);
+				g.drawString("Interact (I)", 260, 307);
+			}
+		}
+		g.setColor(Color.white);;
 		if(quit==true){
 			espBG.draw(210,50);
 			g.drawString("Resume (R)", 225, 65);
@@ -185,10 +198,10 @@ public class Play extends BasicGameState{
 		
 		if(market==true){
 			marketBG.draw(175,30);
-			g.drawString("Welcome to the Market!", 230, 38);
-			g.drawString("Ability to Fly (F)", 243, 75);
-			g.drawString("Increase your Speed (S)", 230, 105);
-			g.drawString("Resume (R)", 278, 135);
+			g.drawString("Why Hello... Can I help you?", 207, 38);
+			g.drawString("Ability to Fly (F)", 207, 75);
+			g.drawString("Increase your Speed (S)", 207, 105);
+			g.drawString("Resume (R)", 207, 135);
 			if(market==false){
 				g.clear();
 			}
@@ -242,7 +255,7 @@ public class Play extends BasicGameState{
 		if(wumpusDeathShow==true){
 			if(wumpusNoisePlay == 1){
 				wumpusNoise.play();
-				pitNoisePlay++;
+				wumpusNoisePlay++;
 			}
 			wumpusDeath.draw(0,0);
 		}
@@ -276,6 +289,7 @@ public class Play extends BasicGameState{
         	pitDeadShow = false;
         	dialogPitShow = false;
         	dialogWumpusShow = false;
+        	marketShow = false;
         	fly = false;
         	pit4Accept = false;
         	notTwice=1;
@@ -284,6 +298,7 @@ public class Play extends BasicGameState{
         	pitNoisePlay = 1; 
         	keyNoisePlay = 1;
         	wumpusNoisePlay = 1;
+        	wizardVisit = 0;
         }		
         
 		if(guyExist==true){
@@ -329,12 +344,13 @@ public class Play extends BasicGameState{
 						guyPositionY -= delta *.1f + speedBoost;
 				}
 				//market
-				if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
+				if((guyPositionY>-330 && guyPositionY<-223) && (guyPositionX>-485 && guyPositionX<-417)){
 					guyPositionY -= delta *.1f + speedBoost;
-					market = true;
+					wizardVisit++;
+					marketShow = true;
 				}
 				else
-					market = false;
+					marketShow = false;
 				//wump
 				if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 					wumpusDeathShow = true;				
@@ -438,12 +454,12 @@ public class Play extends BasicGameState{
 						guyPositionY += delta *.1f + speedBoost;
 				}
 				//market
-				if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
+				if((guyPositionY>-330 && guyPositionY<-223) && (guyPositionX>-485 && guyPositionX<-417)){
 					guyPositionY += delta *.1f + speedBoost;
-					market = true;
+					marketShow = true;
 				}
 				else
-					market = false;
+					marketShow = false;
 				//wump
 				if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 					wumpusDeathShow = true;
@@ -547,12 +563,12 @@ public class Play extends BasicGameState{
 						guyPositionX -= delta *.1f + speedBoost;
 				}
 				//market
-				if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
+				if((guyPositionY>-330 && guyPositionY<-223) && (guyPositionX>-485 && guyPositionX<-417)){
 					guyPositionX -= delta *.1f + speedBoost;
-					market = true;
+					marketShow = true;
 				}
 				else
-					market = false;
+					marketShow = false;
 				//wump
 				if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 					wumpusDeathShow = true;
@@ -656,12 +672,12 @@ public class Play extends BasicGameState{
 						guyPositionX += delta *.1f + speedBoost;
 				}
 				//market
-				if((guyPositionY>-360 && guyPositionY<-190) && (guyPositionX>-622 && guyPositionX<-388)){
+				if((guyPositionY>-330 && guyPositionY<-223) && (guyPositionX>-485 && guyPositionX<-417)){
 					guyPositionX += delta *.1f + speedBoost;
-					market = true;
+					marketShow = true;
 				}
 				else 
-					market = false;
+					marketShow = false;
 				//wump
 				if((guyPositionY>y2 && guyPositionY<y1) && (guyPositionX>x2 && guyPositionX<x1)){
 					wumpusDeathShow = true;
@@ -726,9 +742,18 @@ public class Play extends BasicGameState{
 		//Space Ship Takes Off
 		if(input.isKeyDown(Input.KEY_SPACE)){	
 			if(guyExist==false){
-				  sbg.enterState(4, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000)); 
+				shipNoise.play();
+				sbg.enterState(4, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000)); 
 			}
 		}
+		
+		if(marketShow==true){
+			if(input.isKeyDown(Input.KEY_I)){
+				market=true;
+			}
+		}
+		else
+			market=false;
 		
 		//market menu
 		if(market==true){
