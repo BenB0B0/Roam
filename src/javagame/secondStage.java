@@ -7,6 +7,7 @@ import org.newdawn.slick.state.*;
 public class secondStage extends BasicGameState{
 
 	Animation guy, movingUp, movingDown, movingLeft, movingRight;
+	Animation laserBeam, shootRight;
 	Image worldMap;
 	Image espBG;
 	boolean quit = false; 
@@ -19,6 +20,8 @@ public class secondStage extends BasicGameState{
 	Image Back;
 	Image Left;
 	Image Right;
+	private Music BGmusic; 
+	boolean mute = false;
 	
 	boolean shipFlying = true; 
 	
@@ -32,11 +35,14 @@ public class secondStage extends BasicGameState{
 		Back = new Image("res/ship.png");
 		Left = new Image("res/ship.png");
 		Right = new Image("res/ship.png");
-
+		
 		Image[] walkUp = {Back,Back};
 		Image[] walkDown = {Front,Front};
 		Image[] walkLeft = {Left,Left};
 		Image[] walkRight = {Right,Right};
+		
+		BGmusic = new Music("res/backGroundMusic.ogg");
+		BGmusic.loop();
 		
 		movingUp = new Animation(walkUp, duration, false);
 		movingDown = new Animation(walkDown, duration, false);
@@ -48,16 +54,24 @@ public class secondStage extends BasicGameState{
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
 		worldMap.draw(guyPositionX, guyPositionY);
 		guy.draw(shiftX,shiftY);
+			
 		g.drawString("X: "+guyPositionX+"\nY: "+guyPositionY, 400, 20);
 		
+		
+		g.setColor(Color.white);;
 		if(quit==true){
 			espBG.draw(210,50);
-			g.drawString("Resume (R)", 250, 100);
-			g.drawString("Main Menu (M)", 250, 150);
-			g.drawString("Quit Game (Q)", 250, 200);
+			g.drawString("Resume (R)", 225, 65);
+			g.drawString("Main Menu (Backspace)", 225, 115);
+			g.drawString("Mute Background Music (M)", 225, 165);
+			g.drawString("Quit Game (Q)", 225, 215);
 			if(quit==false){
 				g.clear();
 			}
+		}
+		
+		if(mute==true){
+			BGmusic.stop();
 		}
 		
 		if(guyPositionY > -3.5){
@@ -121,13 +135,20 @@ public class secondStage extends BasicGameState{
 			if(input.isKeyDown(Input.KEY_R)){
 				quit = false;
 			}
-			if(input.isKeyDown(Input.KEY_M)){
+			if(input.isKeyDown(Input.KEY_BACK)){
 				sbg.enterState(0);
 			}
 			if(input.isKeyDown(Input.KEY_Q)){
 				System.exit(0);
 			}
+			if(input.isKeyDown(Input.KEY_M)){
+				mute = true;
+			}
+			if(input.isKeyDown(Input.KEY_N)){
+				sbg.enterState(2);
+			}
 		}
+				
 	}
 	
 	public int getID(){

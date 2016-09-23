@@ -40,6 +40,7 @@ public class Play extends BasicGameState{
 	boolean marketShow = false;
 	boolean fly = false;
 	boolean pit4Accept = false;
+	boolean reborn = false;
 	int notTwice=1;
 	double speedBoost=0;
 	boolean guyExist = true; 
@@ -99,11 +100,19 @@ public class Play extends BasicGameState{
 		wumpusNoise = new Sound("res/wumpusSound.ogg");
 		shipNoise = new Sound("res/shipSound.ogg");
 		
-		Front = new Image("res/Front.png");
-		Back = new Image("res/Back.png");
-		Left = new Image("res/Left.png");
-		Right = new Image("res/Right.png");
-
+		if(reborn==false){
+			Front = new Image("res/Front.png");
+			Back = new Image("res/Back.png");
+			Left = new Image("res/Left.png");
+			Right = new Image("res/Right.png");
+		}
+		else{
+			Front = new Image("res/frontWizard.png");
+			Back = new Image("res/backWizard.png");
+			Left = new Image("res/leftWizard.png");
+			Right = new Image("res/rightWizard.png");
+		}
+		
 		Image[] walkUp = {Back,Back};
 		Image[] walkDown = {Front,Front};
 		Image[] walkLeft = {Left,Left};
@@ -169,7 +178,10 @@ public class Play extends BasicGameState{
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
 		worldMap.draw(guyPositionX, guyPositionY);
 		if(guyExist==true){
-			guy.draw(shiftX,shiftY);
+			if(reborn==true)
+				guy.draw(shiftX-20,shiftY-30);
+			else
+				guy.draw(shiftX,shiftY);
 			g.drawString("X: "+guyPositionX+"\nY: "+guyPositionY, 400, 20);
 		}
 		else{
@@ -200,8 +212,9 @@ public class Play extends BasicGameState{
 			marketBG.draw(175,30);
 			g.drawString("Why Hello... Can I help you?", 207, 38);
 			g.drawString("Ability to Fly (F)", 207, 75);
-			g.drawString("Increase your Speed (S)", 207, 105);
-			g.drawString("Resume (R)", 207, 135);
+			g.drawString("Increase your Speed (S)", 207, 100);
+			g.drawString("Be Reborn (W)",207 , 125);
+			g.drawString("Resume (R)", 207, 150);
 			if(market==false){
 				g.clear();
 			}
@@ -299,6 +312,7 @@ public class Play extends BasicGameState{
         	keyNoisePlay = 1;
         	wumpusNoisePlay = 1;
         	wizardVisit = 0;
+        	reborn = false;
         }		
         
 		if(guyExist==true){
@@ -777,6 +791,11 @@ public class Play extends BasicGameState{
 			}
 			if(input.isKeyDown(Input.KEY_R)){
 				market = false;
+			}
+			if(input.isKeyDown(Input.KEY_W)){
+				reborn = true;
+				sbg.getState( Game.play ).init(gc, sbg);
+	            sbg.enterState( Game.play );
 			}
 			if(input.isKeyDown(Input.KEY_N)){
 				sbg.enterState(2);
