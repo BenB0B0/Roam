@@ -44,7 +44,7 @@ public class Play extends BasicGameState{
 	int notTwice=1;
 	double speedBoost=0;
 	boolean guyExist = true; 
-	boolean mute = false;
+	boolean mute = true;
 	int keyNoisePlay = 1;
 	int pitNoisePlay = 1;
 	int wumpusNoisePlay = 1;

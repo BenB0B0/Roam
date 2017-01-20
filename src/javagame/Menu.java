@@ -39,7 +39,7 @@ public class Menu extends BasicGameState{
 		
 		if((posX>102 && posX<302) && (posY<201 && posY>169)){ //playNow
 			if(Mouse.isButtonDown(0)){
-				sbg.enterState(1);
+				sbg.enterState(10);
 			}
 		}
 		if((posX>333 && posX<533) && (posY<201 && posY>169)){ //exitGame

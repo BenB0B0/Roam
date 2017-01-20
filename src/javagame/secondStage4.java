@@ -4,23 +4,18 @@ import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
-import org.lwjgl.input.Mouse;
 
-
-public class secondStage extends BasicGameState{
-
+public class secondStage4 extends BasicGameState{
 	Animation guy, movingUp, movingDown, movingLeft, movingRight;
 	Animation laserBeam, shootRight;
-	Image worldMap;
+	Image worldMap,interactBack,marketBG;
 	Image espBG;
-	Image marketBG;
 	boolean quit = false; 
-	boolean tele = false;
 	int[] duration = {200,200};
 	float guyPositionX = 0;
-	float guyPositionY = -154;
+	float guyPositionY = 0;
 	float shiftX = guyPositionX + 320;
-	float shiftY = guyPositionY + 314;
+	float shiftY = guyPositionY + 160;
 	Image Front;
 	Image Back;
 	Image Left;
@@ -30,22 +25,23 @@ public class secondStage extends BasicGameState{
 	boolean blackhole=false;
 	boolean blackhole1=false;
 	boolean blackhole2=false;
-	public String mouse = "N/A";
-	int counter=0;
+	boolean shipInt=false;
+	boolean shipMessage=true;
+	boolean shipShow=false;
 	
-	boolean shipFlying = true; 
-	
-	public secondStage(int state){
+	public secondStage4(int state){
 	}
 	
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException{
-		worldMap = new Image("res/secondWorld.png");
+		worldMap = new Image("res/secondWorld2.png");
 		espBG = new Image("res/espBG.png");
 		Front = new Image("res/ship.png");
 		Back = new Image("res/ship.png");
 		Left = new Image("res/ship.png");
 		Right = new Image("res/ship.png");
+		interactBack = new Image("res/interactBack.png");
 		marketBG = new Image("res/marketBG.png");
+		
 		Image[] walkUp = {Back,Back};
 		Image[] walkDown = {Front,Front};
 		Image[] walkLeft = {Left,Left};
@@ -64,7 +60,6 @@ public class secondStage extends BasicGameState{
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
 		worldMap.draw(guyPositionX, guyPositionY);
 		guy.draw(shiftX,shiftY);
-		g.drawString(mouse, 50, 50);
 		g.drawString("X: "+guyPositionX+"\nY: "+guyPositionY, 400, 20);
 		
 		
@@ -79,62 +74,55 @@ public class secondStage extends BasicGameState{
 				g.clear();
 			}
 		}
-		if(tele==true){
-			sbg.enterState(3, new FadeOutTransition(Color.black, 0), new FadeInTransition(Color.white, 1000)); 
-			guyPositionX = -50;
-			guyPositionY = -50;
-			tele=false;
-		}
 		if(blackhole==true){
-			sbg.enterState(6, new FadeOutTransition(Color.black, 0), new FadeInTransition(Color.white, 1000)); 
+			sbg.enterState(3, new FadeOutTransition(Color.black, 0), new FadeInTransition(Color.white, 1000)); 
 			guyPositionX = -0;
 			guyPositionY = -4;
-			counter++;
 			blackhole = false;
 		}
-		if(blackhole1==true){ 
+		if(blackhole1==true){
+			sbg.enterState(3, new FadeOutTransition(Color.black, 0), new FadeInTransition(Color.white, 1000)); 
 			guyPositionX = -0;
 			guyPositionY = -4;
-			counter++;
 			blackhole1 = false;
 		}
 		if(blackhole2==true){
+			sbg.enterState(3, new FadeOutTransition(Color.black, 0), new FadeInTransition(Color.white, 1000)); 
 			guyPositionX = -0;
 			guyPositionY = -4;
-			counter++;
 			blackhole2 = false;
 		}
-		if(counter>=3){
+		
+		if(shipShow==true){
+			if(shipInt==false){
+				interactBack.draw(260,305);
+				g.setColor(Color.red);
+				g.drawString("Interact (I)", 260, 307);
+			}
+		}
+		if(shipInt==true){
 			marketBG.draw(175,30);
-			g.drawString("Hint:", 200, 38);
-			g.drawString("Do you see the blackholes?", 200, 75);
-			g.drawString("There are three of them.", 200, 100);
-			g.drawString("Enter them in the right order",200 , 125);
+			g.drawString("Hello Friend...", 200, 38);
+			g.drawString("Find the tear in the map", 200, 85);
+			g.drawString("-SpaceShipX",200 , 105);
+			g.drawString("--Resume (R)--", 200, 150);
+		}
+		if(shipMessage==true){
+			marketBG.draw(175,30);
+			g.drawString("Hello Friend...", 200, 38);
+			g.drawString("I've created a tear in the map", 200, 75);
+			g.drawString("You may now exit and leave", 200, 100);
+			g.drawString("this dimension -SpaceShipX",200 , 125);
 			g.drawString("--Resume (R)--", 200, 150);
 		}
 		
 		if(mute==true){
 			BGmusic.stop();
 		}
-		
-		if(guyPositionY > -3.5){
-			shipFlying = false;
-		}
 	}
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException{
 		Input input = gc.getInput();
-		int posX = Mouse.getX();
-		int posY = Mouse.getY();
-		mouse = "X: "+posX+" Y: "+posY;
-		
-		if(shipFlying == true){
-			guy = movingUp;
-			guyPositionY += delta *.1f;
-			if(guyPositionY>-3.4){
-				guyPositionY -= delta *.1f;
-			}
-		}
 		
 		//up
 		if(input.isKeyDown(Input.KEY_UP)){
@@ -152,6 +140,12 @@ public class secondStage extends BasicGameState{
 			if((guyPositionY<-625 && guyPositionY>-684) && (guyPositionX<-532 && guyPositionX>-610)){
 				blackhole2=true;
 			}
+			if((guyPositionY>-849 && guyPositionY<-708) && (guyPositionX>-1049 && guyPositionX<-700)){
+				shipShow=true;
+				guyPositionY -= delta *.1f;
+			}
+			else
+				shipShow=false;
 		}
 		
 		//down
@@ -170,6 +164,12 @@ public class secondStage extends BasicGameState{
 			if((guyPositionY<-625 && guyPositionY>-684) && (guyPositionX<-532 && guyPositionX>-610)){
 				blackhole2=true;
 			}
+			if((guyPositionY>-849 && guyPositionY<-708) && (guyPositionX>-1049 && guyPositionX<-700)){
+				shipShow=true;
+				guyPositionY += delta *.1f;
+			}
+			else
+				shipShow=false;
 		}
 		
 		//left
@@ -188,6 +188,12 @@ public class secondStage extends BasicGameState{
 			if((guyPositionY<-625 && guyPositionY>-684) && (guyPositionX<-532 && guyPositionX>-610)){
 				blackhole2=true;
 			}
+			if((guyPositionY>-849 && guyPositionY<-708) && (guyPositionX>-1049 && guyPositionX<-700)){
+				shipShow=true;
+				guyPositionX -= delta *.1f;
+			}
+			else
+				shipShow=false;
 		}
 		
 		//right
@@ -195,7 +201,12 @@ public class secondStage extends BasicGameState{
 			guy = movingRight;
 			guyPositionX -= delta *.1f;
 			if(guyPositionX<-1050){
-				guyPositionX += delta *.1f;
+				if(guyPositionY<-301 && guyPositionY>-380){
+					if(guyPositionX<-1170)
+						sbg.enterState(1, new FadeOutTransition(Color.black, 0), new FadeInTransition(Color.white, 1000)); 
+				}
+				else
+					guyPositionX += delta *.1f;
 			}
 			if((guyPositionY<-183 && guyPositionY>-236) && (guyPositionX<-151 && guyPositionX>-212)){
 				blackhole=true;
@@ -206,14 +217,31 @@ public class secondStage extends BasicGameState{
 			if((guyPositionY<-625 && guyPositionY>-684) && (guyPositionX<-532 && guyPositionX>-610)){
 				blackhole2=true;
 			}
+			if((guyPositionY>-849 && guyPositionY<-708) && (guyPositionX>-1049 && guyPositionX<-700)){
+				shipShow=true;
+				guyPositionX += delta *.1f;
+			}
+			else
+				shipShow=false;
 		}
 		//escape
 		if(input.isKeyDown(Input.KEY_ESCAPE)){
 			quit = true;
 		}
-		if(counter>=3){
+		
+		if(shipShow==true){
+			if(input.isKeyDown(Input.KEY_I)){
+				shipInt=true;
+			}
+		}
+		if(shipInt==true){
 			if(input.isKeyDown(Input.KEY_R)){
-				counter=0;
+				shipInt = false;
+			}
+		}
+		if(shipMessage==true){
+			if(input.isKeyDown(Input.KEY_R)){
+				shipMessage = false;
 			}
 		}
 		//when the menu is up
@@ -234,14 +262,9 @@ public class secondStage extends BasicGameState{
 				sbg.enterState(2);
 			}
 		}
-		if(input.isKeyDown(Input.KEY_SPACE)){
-			tele=true;
-		}
-		
 	}
 	
 	public int getID(){
-		return 3;
+		return 9;
 	}
 }
-
